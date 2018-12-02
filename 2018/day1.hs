@@ -20,5 +20,5 @@ main = do
   let solution1 = processItems numbers
 
   let dupes = findRepeats (IntSet.fromList [], 0) (cycle numbers)
-  return $ take 100 $ dupes
+  return $ take 100000 $ dupes
 
