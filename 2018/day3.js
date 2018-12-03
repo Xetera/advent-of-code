@@ -3,7 +3,8 @@ const {readFileSync} = require('fs')
 const lines = readFileSync('inputs/day3.txt').toString().split('\n')
 
 const toRect = line => {
-  const [_, rest] = line.split('@')
+  const [idThingy, rest] = line.split('@')
+  const [_, id] = idThingy.split('');
   const [locations, dimensions] = rest.trim().split(':');
   const [x, y] = locations.trim().split(',');
   const [width, height] = dimensions.trim().split('x')
@@ -11,7 +12,8 @@ const toRect = line => {
     x: Number(x),
     y: Number(y),
     width: Number(width),
-    height: Number(height)
+    height: Number(height),
+    id
   };
 };
 const rects = lines.map(toRect);
@@ -26,12 +28,17 @@ for (const rect of rects) {
   }
 }
 
-const part1 =
-    points.reduce((acc, row, y) => acc + row.reduce((prev, item, x) => {
-      if (item > 1) {
-        return prev + 1
+const isLone =
+    (rect) => {
+      let count = 0;
+      for (let i = rect.x; i < rect.x + rect.width; i++) {
+        for (let j = rect.y; j < rect.y + rect.height; j++) {
+          count += points[i][j];
+        }
       }
-      return prev
-    }, 0), 0);
+      return count == rect.width * rect.height;
+    }
 
-console.log(part1)
+const valid = rects.filter(isLone);
+
+console.log(valid)
