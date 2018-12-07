@@ -1,4 +1,6 @@
 import Data.Char
+import Data.Ord
+import Data.List
 
 formula = readFile "inputs/day5.txt"
 
@@ -19,4 +21,11 @@ untilStable func items
   | otherwise = untilStable func result
   where result = func items
 
-main = length . untilStable react <$> formula
+stableLength = length . untilStable react
+
+filterByChar pool char = filter (\target -> toLower target /= toLower char) pool
+
+main = do
+  input <- formula
+  let part1 = length $ untilStable react input
+  return . minimum $ map (stableLength . filterByChar input) ['a'..'z']
