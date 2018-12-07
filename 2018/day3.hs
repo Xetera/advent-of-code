@@ -1,17 +1,28 @@
-data Rect = Int Int Int Int Int
+import Text.ParserCombinators.ReadP
 
-split :: String -> Char -> [String]
-split [] delim = [""]
-split (c:cs) delim
-    | c == delim = "" : rest
-    | otherwise = (c : head rest) : tail rest
-    where
-        rest = split cs delim
+data Rectangle = Rectangle Int Int Int Int Int deriving (Show)
 
-toRect ('#':num:' ':'@':' ':rest) = Rect num 
-  where
+parse :: String -> Rectangle
+parse = fst . head . readP_to_S parser
+parseInt :: ReadP Int
+parseInt = readS_to_P reads
+parser :: ReadP Rectangle
+parser = do
+  char '#'
+  id <- parseInt
+  skipSpaces
+  char '@'
+  skipSpaces
+  x <- parseInt
+  char ','
+  y <- parseInt
+  char ':'
+  skipSpaces
+  w <- parseInt
+  char 'x'
+  h <- parseInt
+  return $ Rectangle id x y w h
 
-    
 file = lines <$> readFile "inputs/day3.txt"
 
 -- main = do
