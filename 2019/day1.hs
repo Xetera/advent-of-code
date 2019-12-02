@@ -2,10 +2,10 @@ dataM :: IO [Int]
 dataM = map read . lines <$> readFile "inputs/day1.txt"
 
 calculate :: Int -> Int
-calculate num = floor (fromIntegral num / 3) - 2
+calculate x = x `div` 3 - 2
 
 calculateAll :: Int -> Int
-calculateAll fuel = sum . takeWhile (> 0) . tail $ iterate calculate fuel
+calculateAll = sum . takeWhile (> 0) . tail . iterate calculate
 
 main :: IO ()
 main = do
