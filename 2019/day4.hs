@@ -1,3 +1,4 @@
+import Data.Functor.Contravariant
 import Data.List
 
 paired :: String -> [(Char, Char)]
@@ -10,7 +11,8 @@ passwordSpecs = [isSix, isIncreasing]
     isIncreasing = all (uncurry (<=)) . paired
 
 isValidWith :: (String -> Bool) -> String -> Bool
-isValidWith comparison str = all ($ str) (comparison : passwordSpecs)
+isValidWith comparison =
+  getPredicate . foldMap Predicate $ comparison : passwordSpecs
 
 part1 :: String -> Bool
 part1 = isValidWith $ any (uncurry (==)) . paired
