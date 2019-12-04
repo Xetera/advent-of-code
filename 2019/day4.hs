@@ -1,8 +1,5 @@
 import Data.List
 
-dataM :: IO String
-dataM = readFile "inputs/day4.txt"
-
 paired :: String -> [(Char, Char)]
 paired = zip <*> tail
 
