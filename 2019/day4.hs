@@ -33,7 +33,7 @@ main = do
   [low, high] <- parse <$> dataM
   let range = map show [low .. high]
   let solve f = print . length $ filter f range
-  -- part one
+  -- part 1
   solve part1
   -- part 2
   solve part2
