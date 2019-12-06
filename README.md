@@ -1,2 +1,2 @@
 # Advent-of-Code
-❄ 🎄 Getting a little better every year 🎅 ❄
+🎅 Getting a little better every year 
