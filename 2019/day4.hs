@@ -22,8 +22,7 @@ part2 = isValidWith $ any ((== 2) . length) . group
 
 main :: IO ()
 main = do
-  let (low, high) = (235741, 706948)
-  let range = map show [low .. high]
+  let range = map show [235741 .. 706948]
   let solve f = print . length $ filter f range
   -- part 1
   solve part1
