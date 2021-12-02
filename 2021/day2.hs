@@ -21,17 +21,6 @@ data RunningAim = RunningAim
   }
   deriving (Show)
 
-instance Semigroup RunningAim where
-  a <> b =
-    RunningAim
-      { aim = aim a + aim b,
-        depth = depth a + depth b,
-        forward = forward a + forward b
-      }
-
-instance Monoid RunningAim where
-  mempty = RunningAim {aim = 0, depth = 0, forward = 0}
-
 extractDepth = down <|> up <|> forward
   where
     readDigit = do
@@ -55,10 +44,6 @@ extractDepth = down <|> up <|> forward
 predicate (Forward _) = True
 predicate (Depth _) = False
 
-add (Forward a) (Forward b) = a + b
-add (Depth a) (Depth b) = a + b
-add _ _ = undefined
-
 val (Forward a) = a
 val (Depth a) = a
 
@@ -69,8 +54,7 @@ main = do
   let f = sum $ map val forward
   let d = sum $ map val depth
   print (f * d)
-  print directions
-  let RunningAim {forward, depth} = foldl (flip aim) mempty directions
+  let RunningAim {forward, depth} = foldl (flip aim) RunningAim {aim = 0, forward = 0, depth = 0} directions
   print (forward * depth)
   return ()
   where
