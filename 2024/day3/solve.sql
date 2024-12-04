@@ -3,8 +3,7 @@ create temporary table day3 (data varchar);
 \copy day3 from '/Users/xetera/advent-of-code/2024/day3/input.txt';
 
 -- PART 1 --
-select sum(tup[1]::int * tup[2]::int) val
-  from (select regexp_matches(data, 'mul\((\d+),(\d+)\)', 'g') tup from day3);
+select regexp_matches(data, 'mul\((\d+),(\d+)\)', 'g') as tup, sum(tup[1]::int * tup[2]::int) from day3;
 
 -- PART 2 --
 drop function day3_iterate;
@@ -34,4 +33,4 @@ begin
   return;
 end; $$ language plpgsql;
 
-select sum(t.a) from (select * from day3_iterate()) as t(a);
+explain analyze select sum(t.a) from (select * from day3_iterate()) as t(a);
