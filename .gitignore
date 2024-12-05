@@ -1,3 +1,6 @@
 **/*.o
+**/*.out
+**/*.dSYM
 **/*.hi
 **/node_modules
+
