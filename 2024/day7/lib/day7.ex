@@ -35,9 +35,14 @@ defmodule Day7 do
   def calculate(a, b, :conc), do: a * :math.pow(10, digits(b)) + b
 
   def solve_with(lines, ops) do
-    for {target, nums} <- lines, solve_line(target, nums, ops) > 0 do
-      target
-    end
+    Enum.chunk_every(lines, 20)
+    |> Task.async_stream(fn lines ->
+      for {target, nums} <- lines, solve_line(target, nums, ops) > 0 do
+        target
+      end
+      |> Enum.sum()
+    end)
+    |> Enum.map(fn {:ok, val} -> val end)
     |> Enum.sum()
   end
 
@@ -48,7 +53,7 @@ defmodule Day7 do
     |> solve_with(@operations1)
   end
 
-  @spec solve(String.t()) :: integer()
+  @spec solve_part2(String.t()) :: integer()
   def solve_part2(input) do
     String.split(input, "\n")
     |> Enum.map(&parse/1)
