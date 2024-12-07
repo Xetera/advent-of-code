@@ -8,25 +8,25 @@ defmodule Day7 do
   def parse(line) do
     [target | lines] =
       String.split(line, [":", " "], trim: true)
-      |> Enum.map(fn num ->
-        {parsed, ""} = Integer.parse(num, 10)
-        parsed
-      end)
+      |> Enum.map(fn num -> String.to_integer(num) end)
 
     {target, lines}
   end
 
-  @spec solve_line(integer(), expression(), list(atom())) :: integer()
-  def solve_line(target, [a], _) when a == target, do: 1
-  def solve_line(_, [_], _), do: 0
-  def solve_line(target, [a | _], _) when a > target, do: 0
+  @spec solve_line(integer(), expression(), list(atom())) :: boolean()
+  def solve_line(target, [a], _) when a == target, do: true
+  def solve_line(_, [_], _), do: false
+  def solve_line(target, [a | _], _) when a > target, do: false
 
   def solve_line(target, [a, b | rest], ops) do
-    Enum.map(ops, fn op ->
+    Enum.reduce_while(ops, false, fn op, _ ->
       next = calculate(a, b, op)
-      solve_line(target, [next | rest], ops)
+
+      case solve_line(target, [next | rest], ops) do
+        true -> {:halt, true}
+        false -> {:cont, false}
+      end
     end)
-    |> Enum.sum()
   end
 
   @spec calculate(integer(), integer(), :add | :mult) :: integer()
@@ -37,30 +37,43 @@ defmodule Day7 do
   def solve_with(lines, ops) do
     Enum.chunk_every(lines, 20)
     |> Task.async_stream(fn lines ->
-      for {target, nums} <- lines, solve_line(target, nums, ops) > 0 do
+      for {target, nums} <- lines, solve_line(target, nums, ops) do
         target
       end
       |> Enum.sum()
     end)
-    |> Enum.map(fn {:ok, val} -> val end)
-    |> Enum.sum()
+    |> Enum.reduce(0, fn {:ok, val}, acc -> acc + val end)
   end
 
   @spec solve(String.t()) :: integer()
   def solve(input) do
-    String.split(input, "\n")
-    |> Enum.map(&parse/1)
-    |> solve_with(@operations1)
+    now = :os.system_time(:millisecond)
+
+    result =
+      String.split(input, "\n")
+      |> Enum.map(&parse/1)
+      |> solve_with(@operations1)
+
+    before = :os.system_time(:millisecond)
+    IO.puts("Part 1 Took: #{before - now}ms")
+    result
   end
 
   @spec solve_part2(String.t()) :: integer()
   def solve_part2(input) do
-    String.split(input, "\n")
-    |> Enum.map(&parse/1)
-    |> solve_with(@operations2)
+    now = :os.system_time(:millisecond)
+
+    result =
+      String.split(input, "\n")
+      |> Enum.map(&parse/1)
+      |> solve_with(@operations2)
+
+    before = :os.system_time(:millisecond)
+    IO.puts("Part 2 Took: #{before - now}ms")
+    result
   end
 
+  def digits(num) when num >= 100 and num < 1000, do: 3
+  def digits(num) when num >= 10 and num < 100, do: 2
   def digits(num) when num >= 0 and num < 10, do: 1
-  def digits(num) when num >= 9 and num < 100, do: 2
-  def digits(num) when num >= 99 and num < 1000, do: 3
 end
