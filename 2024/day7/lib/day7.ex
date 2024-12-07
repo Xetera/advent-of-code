@@ -7,7 +7,7 @@ defmodule Day7 do
   @spec parse(String.t()) :: equation()
   def parse(line) do
     [target | lines] =
-      String.split(line, [":", " "], trim: true)
+      String.split(line, [": ", " "])
       |> Enum.map(fn num -> String.to_integer(num) end)
 
     {target, lines}
@@ -19,13 +19,9 @@ defmodule Day7 do
   def solve_line(target, [a | _], _) when a > target, do: false
 
   def solve_line(target, [a, b | rest], ops) do
-    Enum.reduce_while(ops, false, fn op, _ ->
+    Enum.find(ops, fn op ->
       next = calculate(a, b, op)
-
-      case solve_line(target, [next | rest], ops) do
-        true -> {:halt, true}
-        false -> {:cont, false}
-      end
+      solve_line(target, [next | rest], ops)
     end)
   end
 
@@ -35,7 +31,7 @@ defmodule Day7 do
   def calculate(a, b, :conc), do: a * :math.pow(10, digits(b)) + b
 
   def solve_with(lines, ops) do
-    Enum.chunk_every(lines, 20)
+    Enum.chunk_every(lines, 30)
     |> Task.async_stream(fn lines ->
       for {target, nums} <- lines, solve_line(target, nums, ops) do
         target
